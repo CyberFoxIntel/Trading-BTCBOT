@@ -1,0 +1,1703 @@
+﻿<!DOCTYPE html>
+<html lang="it" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3BOT-BTC | The Future of Trading</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Roboto+Mono:wght@300;400;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bgDark: '#0b0b0b',
+                        neonGreen: '#00ff41',
+                        neonRed: '#FF4B55', // N8N Red
+                        neonGold: '#F3BA2F', // Binance Yellow
+                        neonBlue: '#2AABEE', // Telegram Blue
+                        glass: 'rgba(255, 255, 255, 0.05)'
+                    },
+                    fontFamily: {
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        mono: ['Roboto Mono', 'monospace'],
+                    },
+                    boxShadow: {
+                        'neon-green': '0 0 10px #00ff41, 0 0 20px #00ff41',
+                        'neon-gold': '0 0 10px #ffd700, 0 0 20px #ffd700',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <style>
+        body {
+            background-color: #0b0b0b;
+            color: #ffffff;
+            font-family: 'Roboto Mono', monospace;
+            overflow-x: hidden;
+        }
+
+        h1,
+        h2,
+        h3,
+        .brand-font {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        /* Starfield Canvas background */
+        #starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Glassmorphism */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Animated Text Gradient */
+        .text-gradient-animate {
+            background: linear-gradient(to right, #00ff41, #ffd700, #ff003c, #00ff41);
+            background-size: 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: animateGradient 8s ease infinite;
+        }
+
+        @keyframes animateGradient {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* 3D Coin placeholder animation */
+        .coin-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px) rotateY(0deg);
+            }
+
+            50% {
+                transform: translateY(-20px) rotateY(10deg);
+            }
+
+            100% {
+                transform: translateY(0px) rotateY(0deg);
+            }
+        }
+
+        .neon-border-bottom {
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .neon-border-bottom:hover {
+            border-bottom-color: #00ff41;
+            box-shadow: 0 4px 6px -1px rgba(0, 255, 65, 0.1);
+        }
+
+        .soul-card {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transform-style: preserve-3d;
+            perspective: 1000px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .soul-icon-bg {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+        }
+
+        @keyframes flowLine {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(200%);
+            }
+        }
+
+        .animate-flow-line {
+            animation: flowLine 2s linear infinite;
+        }
+
+        .terminal-log {
+            color: #00ff41;
+            margin-bottom: 4px;
+            opacity: 0;
+            text-shadow: 0 0 5px rgba(0, 255, 65, 0.5);
+        }
+
+        .terminal-log span.warn {
+            color: #ffd700;
+            text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+        }
+
+        .terminal-log span.error {
+            color: #ff003c;
+            text-shadow: 0 0 5px rgba(255, 0, 60, 0.5);
+        }
+
+        .terminal-log span.info {
+            color: #00eaff;
+            text-shadow: 0 0 5px rgba(0, 234, 255, 0.5);
+        }
+
+        /* Radar Animation CSS */
+        .radar-scan {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 50%;
+            height: 2px;
+            background: linear-gradient(90deg, #00ff41, transparent);
+            transform-origin: 0% 50%;
+            animation: radar-spin 4s linear infinite;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #00ff41;
+        }
+
+        @keyframes radar-spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .radar-dot {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        /* NEW ANIMATIONS FOR SECURITY SECTION */
+        @keyframes bounce-slow {
+
+            0%,
+            100% {
+                transform: translateY(-5%);
+                animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+            }
+
+            50% {
+                transform: translateY(0);
+                animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+            }
+        }
+
+        .animate-bounce-slow {
+            animation: bounce-slow 3s infinite;
+        }
+
+        @keyframes marquee {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        .animate-marquee {
+            animation: marquee 20s linear infinite;
+        }
+
+        @keyframes pulse-scan {
+            0% {
+                left: -5%;
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                left: 105%;
+                opacity: 0;
+            }
+        }
+
+        .animate-pulse-scan {
+            animation: pulse-scan 4s ease-in-out infinite;
+        }
+
+        /* OPERATIONAL METRICS SECTION STYLES */
+        .metric-card {
+            position: relative;
+            background: #000000;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .metric-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, transparent);
+            transition: all 0.5s ease;
+        }
+
+        .metric-card:hover::after {
+            background: linear-gradient(90deg, #00ff41, #F3BA2F);
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.5);
+        }
+
+        @keyframes scan-line-horizontal {
+            0% {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+
+            100% {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        .scan-wave {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 65, 0.05), transparent);
+            pointer-events: none;
+            z-index: 5;
+            animation: scan-line-horizontal 5s linear infinite;
+        }
+
+        .pulse-green {
+            box-shadow: 0 0 0 0 rgba(0, 255, 65, 0.7);
+            animation: pulse-green 2s infinite;
+        }
+
+        @keyframes pulse-green {
+            0% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(0, 255, 65, 0.7);
+            }
+
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 10px rgba(0, 255, 65, 0);
+            }
+
+            100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(0, 255, 65, 0);
+            }
+        }
+    </style>
+</head>
+
+<body class="antialiased selection:bg-neonGreen selection:text-black">
+
+    <!-- Background Animation -->
+    <canvas id="starfield"></canvas>
+
+    <!-- Header / Nav -->
+    <header class="fixed top-0 w-full z-50 glass-panel border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <!-- Brand -->
+            <div class="flex items-center gap-2 group cursor-pointer">
+                <div
+                    class="w-8 h-8 rounded-full border border-neonGreen flex items-center justify-center group-hover:shadow-neon-green transition-all duration-300">
+                    <span class="text-neonGreen font-bold font-orbitron">3</span>
+                </div>
+                <span
+                    class="text-xl font-orbitron font-bold tracking-wider text-white group-hover:text-neonGreen transition-colors">BOT-BTC</span>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="hidden md:flex gap-8">
+                <a href="#hero"
+                    class="text-sm uppercase tracking-widest hover:text-neonGreen transition-colors neon-border-bottom pb-1">Home</a>
+                <a href="#ecosystem"
+                    class="text-sm uppercase tracking-widest hover:text-neonRed transition-colors neon-border-bottom pb-1">Ecosystem</a>
+                <a href="#core-logic"
+                    class="text-sm uppercase tracking-widest hover:text-neonGold transition-colors neon-border-bottom pb-1">Features</a>
+                <a href="#roadmap"
+                    class="text-sm uppercase tracking-widest hover:text-white transition-colors neon-border-bottom pb-1">Roadmap</a>
+                <a href="#security-deep-dive"
+                    class="text-sm uppercase tracking-widest hover:text-white transition-colors neon-border-bottom pb-1">Security</a>
+            </nav>
+
+            <!-- CTA Button -->
+            <a href="#"
+                class="hidden md:block px-6 py-2 border border-neonGreen text-neonGreen font-orbitron text-sm font-bold tracking-wide hover:bg-neonGreen hover:text-black transition-all duration-300 shadow-[0_0_10px_rgba(0,255,65,0.1)] hover:shadow-neon-green">
+                LAUNCH APP
+            </a>
+
+            <!-- Mobile Menu Button (Placeholder) -->
+            <button class="md:hidden text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16">
+                    </path>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section id="hero" class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
+            <!-- Glow background effect -->
+            <div
+                class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-neonGreen/10 rounded-full blur-[100px] pointer-events-none">
+            </div>
+
+            <div class="container mx-auto px-6 grid md:grid-cols-2 gap-12 items-center relative z-10">
+
+                <!-- Hero Content -->
+                <div class="text-left space-y-8">
+                    <div
+                        class="inline-block px-3 py-1 border border-neonGold/30 rounded-full bg-neonGold/5 backdrop-blur-sm">
+                        <span class="text-neonGold text-xs font-bold tracking-[0.2em] uppercase">System Online
+                            v1.0</span>
+                    </div>
+
+                    <h1 class="text-5xl md:text-7xl font-black leading-tight">
+                        ALGORITHMIC <br>
+                        <span class="text-gradient-animate">DOMINANCE</span>
+                    </h1>
+
+                    <p class="text-gray-400 text-lg md:text-xl font-light max-w-lg leading-relaxed">
+                        Precision trading powered by the <span class="text-white">Three Souls</span> architecture.
+                        Unleash the power of automated Bitcoin strategies.
+                    </p>
+
+                    <div class="flex flex-col sm:flex-row gap-4 pt-4">
+                        <button
+                            class="px-8 py-4 bg-neonGreen text-black font-orbitron font-bold text-lg tracking-wider hover:bg-white hover:shadow-neon-green transition-all duration-300 clip-path-slant">
+                            START TRADING
+                        </button>
+                        <button
+                            class="px-8 py-4 border border-white/20 text-white font-orbitron font-bold text-lg tracking-wider hover:border-white hover:bg-white/5 transition-all duration-300">
+                            READ WHITEPAPER
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Hero Visual (3D Bitcoin Representation) -->
+                <div class="flex justify-center md:justify-end relative">
+                    <!-- Decorative Circles -->
+                    <div
+                        class="absolute inset-0 border border-white/5 rounded-full scale-150 animate-[spin_10s_linear_infinite]">
+                    </div>
+                    <div
+                        class="absolute inset-0 border border-dashed border-white/10 rounded-full scale-125 animate-[spin_15s_linear_infinite_reverse]">
+                    </div>
+
+                    <!-- 3D Coin Element (CSS Only Representation) -->
+                    <div class="coin-float relative w-64 h-64 md:w-96 md:h-96">
+                        <div
+                            class="absolute inset-0 bg-gradient-to-br from-gray-800 to-black rounded-full border-4 border-neonGold shadow-[0_0_50px_rgba(255,215,0,0.3)] flex items-center justify-center">
+                            <span
+                                class="text-8xl md:text-9xl text-neonGold font-orbitron font-black drop-shadow-lg">₿</span>
+                            <!-- Glint -->
+                            <div class="absolute top-10 right-10 w-16 h-16 bg-white/20 rounded-full blur-xl"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Scroll Indicator -->
+            <div class="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
+                <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                </svg>
+            </div>
+        </section>
+
+        <!-- Placeholder Sections -->
+        <section id="three-souls" class="py-24 relative overflow-hidden">
+            <!-- Background Elements -->
+            <div
+                class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent via-bgDark/50 to-bgDark pointer-events-none">
+            </div>
+
+            <div class="container mx-auto px-6 relative z-10">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl md:text-5xl font-orbitron font-bold mb-4">THE <span class="text-white">THREE
+                            SOULS</span></h2>
+                    <p class="text-gray-400 max-w-2xl mx-auto font-light">
+                        Select your trading identity. Three distinct algorithms engineered for any market condition.
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-8 perspective-1000">
+
+                    <!-- CONSERVATIVE CARD (THE GUARDIAN) -->
+                    <div class="soul-card rounded-2xl p-8 relative group" data-glow="#00ff41">
+                        <div
+                            class="absolute top-4 right-4 text-neonGreen opacity-20 group-hover:opacity-100 transition-opacity">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
+                                </path>
+                            </svg>
+                        </div>
+
+                        <div
+                            class="soul-icon-bg w-16 h-16 rounded-xl flex items-center justify-center mb-6 border border-white/10 group-hover:border-neonGreen/50 transition-colors">
+                            <svg class="w-8 h-8 text-white group-hover:text-neonGreen transition-colors" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
+                                </path>
+                            </svg>
+                        </div>
+
+                        <h3
+                            class="text-2xl font-orbitron font-bold text-white mb-2 group-hover:text-neonGreen transition-colors">
+                            CONSERVATIVO</h3>
+                        <p class="text-xs text-neonGreen tracking-widest uppercase mb-6 font-bold">The Whale Strategy
+                        </p>
+
+                        <div class="space-y-4 border-t border-white/5 pt-6">
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-gray-400">RSI Entry</span>
+                                <span class="font-mono text-white group-hover:text-neonGreen">
+                                    < 28</span>
+                            </div>
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-gray-400">Take Profit</span>
+                                <span class="font-mono text-white group-hover:text-neonGreen">1.7%</span>
+                            </div>
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-gray-400">Score Required</span>
+                                <span class="font-mono text-white group-hover:text-neonGreen">6 / 6</span>
+                            </div>
+                        </div>
+
+                        <p class="mt-8 text-gray-400 text-sm leading-relaxed border-t border-white/5 pt-6 opacity-80">
+                            <br>
+                            Extreme patience. Operates only on deep corrections and flash crashes. Max safety.
+                        </p>
+                    </div>
+
+                    <!-- BALANCED CARD (THE STRATEGIST) -->
+                    <div class="soul-card rounded-2xl p-8 relative group" data-glow="#ffd700">
+                        <div
+                            class="absolute top-4 right-4 text-neonGold opacity-20 group-hover:opacity-100 transition-opacity">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z">
+                                </path>
+                            </svg>
+                        </div>
+
+                        <div
+                            class="soul-icon-bg w-16 h-16 rounded-xl flex items-center justify-center mb-6 border border-white/10 group-hover:border-neonGold/50 transition-colors">
+                            <svg class="w-8 h-8 text-white group-hover:text-neonGold transition-colors" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3">
+                                </path>
+                            </svg>
+                        </div>
+
+                        <h3
+                            class="text-2xl font-orbitron font-bold text-white mb-2 group-hover:text-neonGold transition-colors">
+                            BILANCIATO</h3>
+                        <p class="text-xs text-neonGold tracking-widest uppercase mb-6 font-bold">Core Balanced Strategy
+                        </p>
+
+                        <div class="space-y-4 border-t border-white/5 pt-6">
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-gray-400">RSI Entry</span>
+                                <span class="font-mono text-white group-hover:text-neonGold">
+                                    < 32</span>
+                            </div>
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-gray-400">Take Profit</span>
+                                <span class="font-mono text-white group-hover:text-neonGold">3.0%</span>
+                            </div>
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-gray-400">Score Required</span>
+                                <span class="font-mono text-white group-hover:text-neonGold">>= 4</span>
+                            </div>
+                        </div>
+
+                        <p class="mt-8 text-gray-400 text-sm leading-relaxed border-t border-white/5 pt-6 opacity-80">
+                            <br>
+                            The core portfolio builder. Balances frequency and signal quality for steady growth.
+                        </p>
+                    </div>
+
+                    <!-- AGGRESSIVE CARD (THE HUNTER) -->
+                    <div class="soul-card rounded-2xl p-8 relative group" data-glow="#ff003c">
+                        <div
+                            class="absolute top-4 right-4 text-neonRed opacity-20 group-hover:opacity-100 transition-opacity">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                        </div>
+
+                        <div
+                            class="soul-icon-bg w-16 h-16 rounded-xl flex items-center justify-center mb-6 border border-white/10 group-hover:border-neonRed/50 transition-colors">
+                            <svg class="w-8 h-8 text-white group-hover:text-neonRed transition-colors" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                        </div>
+
+                        <h3
+                            class="text-2xl font-orbitron font-bold text-white mb-2 group-hover:text-neonRed transition-colors">
+                            AGGRESSIVO</h3>
+                        <p class="text-xs text-neonRed tracking-widest uppercase mb-6 font-bold">Scalper Strategy</p>
+
+                        <div class="space-y-4 border-t border-white/5 pt-6">
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-gray-400">RSI Entry</span>
+                                <span class="font-mono text-white group-hover:text-neonRed">
+                                    < 38</span>
+                            </div>
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-gray-400">Take Profit</span>
+                                <span class="font-mono text-white group-hover:text-neonRed">1.5%</span>
+                            </div>
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-gray-400">Score Required</span>
+                                <span class="font-mono text-white group-hover:text-neonRed">>= 3</span>
+                            </div>
+                        </div>
+
+                        <p class="mt-8 text-gray-400 text-sm leading-relaxed border-t border-white/5 pt-6 opacity-80">
+                            <br>
+                            Maximizes exposure on micro-trends. Accepts higher risk to catch every opportunity.
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <section id="ecosystem"
+            class="py-24 relative overflow-hidden bg-gradient-to-b from-bgDark to-black border-t border-white/5">
+            <div class="container mx-auto px-6 relative z-10">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl md:text-5xl font-orbitron font-bold mb-4">SYSTEM <span
+                            class="text-gradient-animate">ECOSYSTEM</span></h2>
+                    <p class="text-gray-400 max-w-2xl mx-auto font-light">
+                        Real-time low latency data pipeline. From exchange to execution in milliseconds.
+                    </p>
+                </div>
+
+                <!-- FLOW DIAGRAM -->
+                <div class="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16 mb-20 relative">
+
+                    <!-- Connection Line (Desktop) -->
+                    <div
+                        class="hidden md:block absolute top-1/2 left-0 w-full h-1 bg-white/5 -z-10 transform -translate-y-1/2">
+                    </div>
+                    <div
+                        class="hidden md:block absolute top-1/2 left-1/4 w-1/2 h-1 overflow-hidden -z-10 transform -translate-y-1/2">
+                        <div class="w-full h-full bg-neonGreen/50 shadow-[0_0_15px_#00ff41] animate-flow-line"></div>
+                    </div>
+
+                    <!-- BINANCE NODE -->
+                    <div class="relative group cursor-pointer" onclick="openModal('binance')">
+                        <div
+                            class="w-24 h-24 rounded-2xl bg-black/50 border border-white/10 flex items-center justify-center backdrop-blur-md relative z-10 group-hover:border-neonGold transition-colors duration-300">
+                            <!-- Binance Icon SVG -->
+                            <svg class="w-12 h-12 text-neonGold" viewBox="0 0 32 32" fill="currentColor">
+                                <path
+                                    d="M16 0l6 6-6 6-6-6 6-6zM6 10l6 6-6 6-6-6 6-6zM16 20l6 6-6 6-6-6 6-6zM26 10l6 6-6 6-6-6 6-6zM11.5 16l4.5 4.5 4.5-4.5-4.5-4.5-4.5 4.5z" />
+                            </svg>
+
+                            <!-- DISCOVER BUTTON (Hover) -->
+                            <div
+                                class="absolute -top-10 left-1/2 transform -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible group-hover:-translate-y-2 transition-all duration-300 z-20">
+                                <div
+                                    class="bg-black/80 backdrop-blur border border-neonGold text-neonGold text-[10px] font-bold px-3 py-1 rounded-full shadow-[0_0_10px_rgba(243,186,47,0.3)] tracking-widest whitespace-nowrap">
+                                    DISCOVER
+                                </div>
+                            </div>
+                        </div>
+                        <p
+                            class="text-center mt-4 font-orbitron text-sm text-gray-400 group-hover:text-neonGold transition-colors">
+                            BINANCE API</p>
+                        <div
+                            class="absolute inset-0 bg-neonGold/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                        </div>
+                    </div>
+
+                    <!-- ARROW 1 -->
+                    <div class="text-gray-600 md:hidden">↓</div>
+
+                    <!-- N8N NODE -->
+                    <div class="relative group cursor-pointer" onclick="openModal('n8n')">
+                        <div
+                            class="w-24 h-24 rounded-2xl bg-black/50 border border-white/10 flex items-center justify-center backdrop-blur-md relative z-10 group-hover:border-neonRed transition-colors duration-300">
+                            <!-- n8n Icon SVG (Styled) -->
+                            <svg class="w-12 h-12 text-neonRed" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                            <!-- DISCOVER BUTTON (Hover) -->
+                            <div
+                                class="absolute -top-10 left-1/2 transform -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible group-hover:-translate-y-2 transition-all duration-300 z-20">
+                                <div
+                                    class="bg-black/80 backdrop-blur border border-neonRed text-neonRed text-[10px] font-bold px-3 py-1 rounded-full shadow-[0_0_10px_rgba(255,75,85,0.3)] tracking-widest whitespace-nowrap">
+                                    DISCOVER
+                                </div>
+                            </div>
+                        </div>
+                        <p
+                            class="text-center mt-4 font-orbitron text-sm text-gray-400 group-hover:text-neonRed transition-colors">
+                            N8N ENGINE</p>
+                        <div
+                            class="absolute inset-0 bg-neonRed/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                        </div>
+                    </div>
+
+                    <!-- ARROW 2 -->
+                    <div class="text-gray-600 md:hidden">↓</div>
+
+                    <!-- TELEGRAM NODE -->
+                    <div class="relative group cursor-pointer" onclick="openModal('telegram')">
+                        <div
+                            class="w-24 h-24 rounded-2xl bg-black/50 border border-white/10 flex items-center justify-center backdrop-blur-md relative z-10 group-hover:border-neonBlue transition-colors duration-300">
+                            <!-- Telegram Icon SVG -->
+                            <svg class="w-12 h-12 text-neonBlue" viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.28-.02-.12.02-1.92 1.22-5.42 3.59-.51.35-.98.52-1.4.51-.46-.01-1.35-.26-2.01-.47-.81-.27-1.46-.42-1.4-.88.03-.24.37-.49 1.03-.75 4.04-1.76 6.74-2.92 8.09-3.48 3.85-1.6 4.64-1.88 5.17-1.88.11 0 .37.03.54.17.14.12.18.28.2.45-.02.07-.02.21-.03.26z" />
+                            </svg>
+                            <!-- DISCOVER BUTTON (Hover) -->
+                            <div
+                                class="absolute -top-10 left-1/2 transform -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible group-hover:-translate-y-2 transition-all duration-300 z-20">
+                                <div
+                                    class="bg-black/80 backdrop-blur border border-neonBlue text-neonBlue text-[10px] font-bold px-3 py-1 rounded-full shadow-[0_0_10px_rgba(42,171,238,0.3)] tracking-widest whitespace-nowrap">
+                                    DISCOVER
+                                </div>
+                            </div>
+                        </div>
+                        <p
+                            class="text-center mt-4 font-orbitron text-sm text-gray-400 group-hover:text-neonBlue transition-colors">
+                            TELEGRAM</p>
+                        <div
+                            class="absolute inset-0 bg-neonBlue/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- LIVE TERMINAL -->
+                <div class="max-w-4xl mx-auto">
+                    <div class="bg-black border border-white/10 rounded-lg overflow-hidden shadow-2xl relative">
+                        <!-- Terminal Header -->
+                        <div class="bg-white/5 px-4 py-2 flex items-center gap-2 border-b border-white/5">
+                            <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                            <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                            <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                            <span class="ml-2 text-xs text-gray-500 font-mono">root@3bot-system:~</span>
+                        </div>
+                        <!-- Terminal Body -->
+                        <div id="terminal-logs" class="p-4 font-mono text-xs md:text-sm h-64 overflow-hidden relative">
+                            <div
+                                class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent to-black pointer-events-none z-10">
+                            </div>
+                            <!-- Logs will be injected here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- INFO MODAL (Hidden by default) -->
+                <div id="tech-modal"
+                    class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/80 backdrop-blur-sm opacity-0 transition-opacity duration-300">
+                    <div
+                        class="bg-black/90 border border-neonGreen/50 rounded-2xl p-8 max-w-md w-full mx-4 relative transform scale-90 transition-transform duration-300 shadow-[0_0_50px_rgba(0,255,65,0.1)]">
+
+                        <!-- Close Button -->
+                        <button onclick="closeModal()"
+                            class="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+
+                        <h3 id="modal-title" class="text-2xl font-orbitron font-bold text-white mb-4 tracking-wider">
+                        </h3>
+                        <div class="h-0.5 w-12 bg-neonGreen mb-6"></div>
+                        <p id="modal-desc" class="text-gray-300 leading-relaxed font-light"></p>
+
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- CORE LOGIC SECTION (REDESIGNED V2 - CENTERED) -->
+        <section id="core-logic" class="py-32 relative overflow-hidden bg-bgDark">
+            <div class="container mx-auto px-6 relative z-10">
+
+                <!-- Centered Header -->
+                <div class="text-center max-w-4xl mx-auto mb-16 space-y-4">
+                    <h2 class="text-4xl md:text-5xl font-bold font-orbitron text-white">
+                        ALGORITHMIC <span class="text-neonGreen">PRECISION</span>
+                    </h2>
+                    <p class="text-gray-400 font-light leading-relaxed">
+                        The 3BOT engine analyzes real-time price fractals. A three-stage decision matrix filters market
+                        noise to isolate pure alpha signals.
+                    </p>
+                </div>
+
+                <!-- Centered Sine Wave Canvas -->
+                <div
+                    class="relative h-64 w-full md:w-3/4 mx-auto bg-white/5 rounded-2xl border border-neonGreen/20 overflow-hidden shadow-[0_0_30px_rgba(0,255,65,0.05)] mb-16">
+                    <canvas id="waveCanvas" class="w-full h-full block"></canvas>
+                    <div
+                        class="absolute top-3 left-3 text-[10px] text-neonGreen font-mono tracking-widest flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-neonGreen animate-pulse"></span>
+                        MARKET_WAVE_ANALYSIS
+                    </div>
+                </div>
+
+                <!-- Bottom Split: Cards (Left) | Radar (Right) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+
+                    <!-- Left Column: Info Cards -->
+                    <div class="space-y-4">
+                        <!-- Card 1 -->
+                        <div
+                            class="flex items-start gap-4 p-4 rounded-xl bg-white/5 border border-white/10 hover:border-neonGreen/50 transition-all duration-300 group">
+                            <div class="p-3 bg-neonGreen/10 rounded-lg text-neonGreen group-hover:scale-110 transition">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h4
+                                    class="font-orbitron text-sm font-bold text-white mb-1 group-hover:text-neonGreen transition">
+                                    Mean Reversion Logic</h4>
+                                <p class="text-xs text-gray-500 leading-relaxed font-mono">Mathematical probability
+                                    models that predict price return to average after extreme deviations.</p>
+                            </div>
+                        </div>
+
+                        <!-- Card 2 -->
+                        <div
+                            class="flex items-start gap-4 p-4 rounded-xl bg-white/5 border border-white/10 hover:border-neonGold/50 transition-all duration-300 group">
+                            <div class="p-3 bg-neonGold/10 rounded-lg text-neonGold group-hover:scale-110 transition">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h4
+                                    class="font-orbitron text-sm font-bold text-white mb-1 group-hover:text-neonGold transition">
+                                    RSI Integration</h4>
+                                <p class="text-xs text-gray-500 leading-relaxed font-mono">Precision entry points based
+                                    on oversold/overbought conditions. Buying fear, selling greed.</p>
+                            </div>
+                        </div>
+
+                        <!-- Card 3 -->
+                        <div
+                            class="flex items-start gap-4 p-4 rounded-xl bg-white/5 border border-white/10 hover:border-neonRed/50 transition-all duration-300 group">
+                            <div class="p-3 bg-neonRed/10 rounded-lg text-neonRed group-hover:scale-110 transition">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h4
+                                    class="font-orbitron text-sm font-bold text-white mb-1 group-hover:text-neonRed transition">
+                                    Dynamic Exit Strategy</h4>
+                                <p class="text-xs text-gray-500 leading-relaxed font-mono">Adaptive Take Profit levels
+                                    that adjust in real-time based on market volatility (ATR).</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Strategy Radar (Smaller) -->
+                    <div class="relative flex justify-center items-center h-full min-h-[300px]">
+                        <!-- Radar Container -->
+                        <div
+                            class="relative w-64 h-64 md:w-72 md:h-72 rounded-full border border-neonGreen/20 bg-neonGreen/5 shadow-[0_0_40px_rgba(0,255,65,0.1)] flex justify-center items-center overflow-hidden">
+
+                            <!-- Grid Rings -->
+                            <div class="absolute inset-0 rounded-full border border-neonGreen/10 scale-[0.75]"></div>
+                            <div class="absolute inset-0 rounded-full border border-neonGreen/10 scale-[0.50]"></div>
+                            <div class="absolute inset-0 rounded-full border border-neonGreen/10 scale-[0.25]"></div>
+
+                            <!-- Crosshair -->
+                            <div class="absolute w-full h-px bg-neonGreen/20 z-0"></div>
+                            <div class="absolute h-full w-px bg-neonGreen/20 z-0"></div>
+
+                            <!-- Scanning Line -->
+                            <div id="radar-scan" class="radar-scan z-10"></div>
+
+                            <!-- Target Dots -->
+                            <!-- Red Dot (Aggressive) -->
+                            <div id="dot-red"
+                                class="radar-dot absolute w-3 h-3 bg-neonRed rounded-full shadow-[0_0_15px_#ff003c] z-20"
+                                style="top: 25%; right: 25%;"></div>
+
+                            <!-- Yellow Dot (Balanced) -->
+                            <div id="dot-yellow"
+                                class="radar-dot absolute w-3 h-3 bg-neonGold rounded-full shadow-[0_0_15px_#ffd700] z-20"
+                                style="bottom: 30%; right: 35%;"></div>
+
+                            <!-- Green Dot (Conservative) -->
+                            <div id="dot-green"
+                                class="radar-dot absolute w-3 h-3 bg-neonGreen rounded-full shadow-[0_0_15px_#00ff41] z-20"
+                                style="bottom: 25%; left: 30%;"></div>
+
+                            <!-- Center Core -->
+                            <div
+                                class="absolute w-4 h-4 bg-neonGreen rounded-full shadow-[0_0_20px_#00ff41] z-30 border-2 border-black">
+                            </div>
+                        </div>
+
+                        <!-- Status Label -->
+                        <div
+                            class="absolute bottom-4 px-4 py-1 bg-black border border-neonGreen/50 rounded-full text-[10px] text-neonGreen font-orbitron tracking-widest flex items-center gap-2 shadow-[0_0_20px_rgba(0,255,65,0.2)]">
+                            <span class="w-1.5 h-1.5 rounded-full bg-neonGreen animate-pulse"></span>
+                            ACTIVE
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ROADMAP SECTION -->
+        <section id="roadmap" class="min-h-screen flex items-center justify-center relative py-20 bg-black/50">
+            <div class="container mx-auto px-6 relative z-10">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl md:text-5xl font-bold text-white mb-4 tracking-wider">FUTURE PROTOCOLS</h2>
+                    <p class="text-gray-400 max-w-2xl mx-auto">The evolution of 3BOT is constant. Our trajectory is set
+                        towards autonomous decentralized trading.</p>
+                </div>
+
+                <div class="relative max-w-4xl mx-auto">
+                    <!-- Vertical Line -->
+                    <div
+                        class="absolute left-1/2 transform -translate-x-1/2 h-full w-px bg-gradient-to-b from-green-500 via-yellow-500 to-red-500 opacity-30">
+                    </div>
+
+                    <!-- Phase 1: Q1 -->
+                    <div class="relative flex items-center justify-between mb-24 opacity-100 roadmap-item">
+                        <div class="w-5/12 text-right pr-8">
+                            <h3 class="text-2xl font-bold text-green-400">GENESIS</h3>
+                            <p class="text-sm text-gray-500 mb-1">Q1 2026</p>
+                            <p class="text-gray-300">Full integration with Binance Spot API. Launch of Guardian,
+                                Strategist, and Hunter algorithms. Telegram notification system live.</p>
+                        </div>
+                        <div
+                            class="absolute left-1/2 transform -translate-x-1/2 flex items-center justify-center w-8 h-8 rounded-full bg-black border-2 border-green-500 shadow-[0_0_15px_#22c55e]">
+                            <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                        </div>
+                        <div class="w-5/12 pl-8"></div>
+                    </div>
+
+
+
+                    <!-- Phase 2: Q2 2026 -->
+                    <div
+                        class="relative flex items-center justify-between opacity-40 hover:opacity-100 transition-opacity roadmap-item">
+                        <div class="w-5/12"></div>
+                        <div
+                            class="absolute left-1/2 transform -translate-x-1/2 flex items-center justify-center w-4 h-4 rounded-full bg-black border border-yellow-500">
+                            <div class="w-1 h-1 rounded-full bg-yellow-500"></div>
+                        </div>
+                        <div class="w-5/12 pl-8">
+                            <h3 class="text-2xl font-bold text-yellow-400">ECOSYSTEM EXPANSION</h3>
+                            <p class="text-sm text-gray-500 mb-1">Q2 2026</p>
+                            <p class="text-gray-300">Development of advanced multi-asset trading bots and a proprietary
+                                Web Dashboard for real-time monitoring. Implementation of institutional-grade analytical
+                                tools and cross-exchange portfolio management.</p>
+                        </div>
+                    </div>
+
+                    <!-- Phase 3: Q3 2027 -->
+                    <div
+                        class="relative flex items-center justify-between opacity-40 hover:opacity-100 transition-opacity roadmap-item">
+                        <div class="w-5/12 text-right pr-8">
+                            <h3 class="text-2xl font-bold text-red-500">STRATEGIC SCALING</h3>
+                            <p class="text-sm text-gray-500 mb-1">Q3 2027</p>
+                            <p class="text-gray-300">Massive infrastructure expansion across global social platforms and
+                                high-performance server clusters. Launch of strategic marketing campaigns, corporate
+                                collaborations, and global ecosystem networking.</p>
+                        </div>
+                        <div
+                            class="absolute left-1/2 transform -translate-x-1/2 flex items-center justify-center w-4 h-4 rounded-full bg-black border border-red-500">
+                            <div class="w-1 h-1 rounded-full bg-red-500"></div>
+                        </div>
+                        <div class="w-5/12 pl-8"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECURITY & INFRASTRUCTURE DEEP DIVE -->
+        <section id="security-deep-dive" class="py-24 relative overflow-hidden bg-[#050505]">
+
+            <!-- Deep Space Background & Grid -->
+            <div class="absolute inset-0 z-0 opacity-20 pointer-events-none">
+                <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_#1a1a1a_0%,_#000000_100%)]"></div>
+                <!-- Perspective Grid -->
+                <div
+                    class="w-full h-[200%] absolute bottom-0 bg-[linear-gradient(to_right,#111_1px,transparent_1px),linear-gradient(to_bottom,#111_1px,transparent_1px)] bg-[size:40px_40px] [transform:perspective(500px)_rotateX(60deg)] origin-bottom">
+                </div>
+            </div>
+
+            <div class="container mx-auto px-6 relative z-10">
+
+                <h2 class="text-3xl md:text-5xl font-orbitron font-bold text-center mb-16">
+                    <span class="text-white">SECURITY-FIRST</span> <span
+                        class="text-gradient-animate">ARCHITECTURE</span>
+                </h2>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 text-white">
+
+                    <!-- LEFT: Security First (Shield) -->
+                    <div
+                        class="lg:col-span-5 flex flex-col items-center justify-center p-8 glass-panel rounded-2xl border border-neonGreen/20 shadow-[0_0_30px_rgba(0,255,65,0.05)] relative group">
+
+                        <!-- Pulse Effect behind shield -->
+                        <div class="absolute w-48 h-48 bg-neonGreen/10 rounded-full blur-3xl animate-pulse"></div>
+
+                        <!-- Animated Shield Icon -->
+                        <div class="relative w-24 h-24 mb-8">
+                            <svg class="w-full h-full text-neonGreen drop-shadow-[0_0_10px_rgba(0,255,65,0.5)] animate-bounce-slow"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                            </svg>
+                        </div>
+
+                        <h3 class="text-2xl font-bold font-orbitron mb-4 text-neonGreen">LIQUIDITY LOCKED</h3>
+                        <p class="text-center text-gray-300 leading-relaxed font-light mb-6">
+                            Your security is our primary protocol. We operate exclusively via Binance APIs with <span
+                                class="text-white font-bold">'Withdrawal'</span> permissions disabled. Your funds remain
+                            under your direct control at all times.
+                        </p>
+
+                        <!-- Status Badge -->
+                        <div
+                            class="px-4 py-1 rounded-full bg-neonGreen/10 border border-neonGreen/30 text-neonGreen text-xs tracking-widest font-bold">
+                            PROTOCOL SECURE
+                        </div>
+
+                    </div>
+
+                    <!-- RIGHT: Infrastructure Grid -->
+                    <div class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-6">
+
+                        <!-- Card 1: No Withdrawal -->
+                        <div
+                            class="p-6 rounded-xl bg-white/5 border border-white/10 hover:border-neonRed/50 transition-all duration-300 group hover:-translate-y-1">
+                            <div class="w-10 h-10 mb-4 text-neonRed">
+                                <svg class="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <h4 class="font-bold font-orbitron text-lg mb-2 group-hover:text-neonRed transition-colors">
+                                NO WITHDRAWAL ACCESS</h4>
+                            <p class="text-xs text-gray-400">API Keys strictly generated with read/trade-only scope.
+                                Visual confirmation required.</p>
+                        </div>
+
+                        <!-- Card 2: IP Whitelisting -->
+                        <div
+                            class="p-6 rounded-xl bg-white/5 border border-white/10 hover:border-neonBlue/50 transition-all duration-300 group hover:-translate-y-1">
+                            <div class="w-10 h-10 mb-4 text-neonBlue">
+                                <svg class="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            <h4
+                                class="font-bold font-orbitron text-lg mb-2 group-hover:text-neonBlue transition-colors">
+                                API IP-WHITELISTING</h4>
+                            <p class="text-xs text-gray-400">Access restricted to our specific server cluster IPs.
+                                Unknown sources blocked instantly.</p>
+                        </div>
+
+                        <!-- Card 3: Isolated Database -->
+                        <div
+                            class="p-6 rounded-xl bg-white/5 border border-white/10 hover:border-neonGold/50 transition-all duration-300 group hover:-translate-y-1">
+                            <div class="w-10 h-10 mb-4 text-neonGold">
+                                <svg class="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4">
+                                    </path>
+                                </svg>
+                            </div>
+                            <h4
+                                class="font-bold font-orbitron text-lg mb-2 group-hover:text-neonGold transition-colors">
+                                ISOLATED DATABASE</h4>
+                            <p class="text-xs text-gray-400">Dedicated MySQL instances per bot. Zero cross-contamination
+                                risk.</p>
+                        </div>
+
+                        <!-- Card 4: RSA Encryption -->
+                        <div
+                            class="p-6 rounded-xl bg-white/5 border border-white/10 hover:border-purple-400/50 transition-all duration-300 group hover:-translate-y-1">
+                            <div class="w-10 h-10 mb-4 text-purple-400">
+                                <svg class="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <h4
+                                class="font-bold font-orbitron text-lg mb-2 group-hover:text-purple-400 transition-colors">
+                                RSA KEYS ENCRYPTION</h4>
+                            <p class="text-xs text-gray-400">Military-grade encryption for all stored keys and transit
+                                data.</p>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- THE PERFORMANCE PULSE -->
+                <div
+                    class="mt-20 relative h-12 flex items-center overflow-hidden border-t border-b border-neonGreen/10 bg-black/40">
+                    <!-- Line -->
+                    <div class="absolute top-1/2 left-0 w-full h-px bg-neonGreen/30 shadow-[0_0_10px_#00ff41]"></div>
+                    <!-- Scanner Blip -->
+                    <div
+                        class="absolute top-0 bottom-0 w-1 bg-neonGreen blur-sm animate-pulse-scan h-full z-10 box-shadow-[0_0_20px_#00ff41]">
+                    </div>
+
+                    <!-- Scrolling Text -->
+                    <div class="flex whitespace-nowrap animate-marquee text-xs font-mono text-neonGreen/80 w-full">
+                        <span class="mx-8">Checking API Status... <span class="text-white">OK</span></span>
+                        <span class="mx-8">Database Latency: <span class="text-white">12ms</span></span>
+                        <span class="mx-8">HMAC SHA256 Signature <span class="text-white">VERIFIED</span></span>
+                        <span class="mx-8">Binance WebSocket: <span class="text-white">CONNECTED</span></span>
+                        <span class="mx-8">Encryption Layer: <span class="text-white">ACTIVE</span></span>
+                        <!-- Duplicate for loop -->
+                        <span class="mx-8">Checking API Status... <span class="text-white">OK</span></span>
+                        <span class="mx-8">Database Latency: <span class="text-white">12ms</span></span>
+                        <span class="mx-8">HMAC SHA256 Signature <span class="text-white">VERIFIED</span></span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- REAL-TIME OPERATIONAL METRICS -->
+        <section id="operational-metrics"
+            class="py-20 relative overflow-hidden bg-black border-t border-b border-white/5">
+            <div class="scan-wave"></div>
+            <div class="container mx-auto px-6 relative z-10">
+                <div
+                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-white/10">
+
+                    <!-- Card 1: 24/7 Automation -->
+                    <div class="metric-card p-10 flex flex-col items-center justify-center text-center group">
+                        <span
+                            class="text-[10px] font-orbitron tracking-[0.3em] text-gray-500 mb-4 group-hover:text-neonGreen transition-colors">SYSTEM
+                            UPTIME</span>
+                        <div class="flex items-center gap-3 mb-2">
+                            <span class="text-4xl md:text-5xl font-orbitron font-bold text-white tracking-tighter"
+                                data-count-to="24">0</span>
+                            <span
+                                class="text-4xl md:text-5xl font-orbitron font-bold text-white tracking-tighter">/7</span>
+                            <div class="w-3 h-3 rounded-full bg-neonGreen pulse-green"></div>
+                        </div>
+                        <span class="text-xs font-mono text-gray-400 tracking-widest uppercase mt-2">NON-STOP MARKET
+                            ANALYSIS</span>
+                    </div>
+
+                    <!-- Card 2: Year-Round Reliability -->
+                    <div class="metric-card p-10 flex flex-col items-center justify-center text-center group">
+                        <span
+                            class="text-[10px] font-orbitron tracking-[0.3em] text-gray-500 mb-4 group-hover:text-neonGreen transition-colors uppercase">Operational
+                            Continuity</span>
+                        <div class="flex items-center gap-1 mb-2">
+                            <span class="text-4xl md:text-5xl font-orbitron font-bold text-white tracking-tighter"
+                                data-count-to="365">0</span>
+                            <span class="text-2xl font-orbitron font-bold text-white/50 ml-2">DAYS</span>
+                        </div>
+                        <span class="text-xs font-mono text-gray-400 tracking-widest uppercase mt-2">ANNUAL MARKET
+                            COVERAGE</span>
+                    </div>
+
+                    <!-- Card 3: Triple-Core Strategy -->
+                    <div class="metric-card p-10 flex flex-col items-center justify-center text-center group">
+                        <span
+                            class="text-[10px] font-orbitron tracking-[0.3em] text-gray-500 mb-4 group-hover:text-neonGreen transition-colors uppercase">Strategic
+                            Diversification</span>
+                        <div class="flex items-center gap-1 mb-2">
+                            <span class="text-4xl md:text-5xl font-orbitron font-bold text-white tracking-tighter"
+                                data-count-to="3">0</span>
+                            <span class="text-2xl font-orbitron font-bold text-white/50 ml-2">PROFILES</span>
+                        </div>
+                        <span class="text-xs font-mono text-gray-400 tracking-widest uppercase mt-2">AGGRESSIVE,
+                            BALANCED, CONSERVATIVE</span>
+                    </div>
+
+                    <!-- Card 4: System Status -->
+                    <div class="metric-card p-10 flex flex-col items-center justify-center text-center group">
+                        <span
+                            class="text-[10px] font-orbitron tracking-[0.3em] text-gray-500 mb-4 group-hover:text-neonGold transition-colors uppercase">Synchronization</span>
+                        <div class="flex items-center gap-1 mb-2">
+                            <span
+                                class="text-4xl md:text-5xl font-orbitron font-bold text-neonGold tracking-tighter drop-shadow-[0_0_10px_rgba(243,186,47,0.5)]">ACTIVE</span>
+                        </div>
+                        <span class="text-xs font-mono text-gray-400 tracking-widest uppercase mt-2">REAL-TIME BINANCE
+                            CONNECTIVITY</span>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA & FOOTER -->
+        <section id="cta" class="py-32 relative overflow-hidden flex flex-col items-center justify-center text-center">
+            <!-- Background Glow -->
+            <div
+                class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-full bg-gradient-to-t from-green-900/20 to-transparent pointer-events-none">
+            </div>
+
+            <div class="relative z-10 max-w-4xl mx-auto px-6">
+                <h2 class="text-5xl md:text-7xl font-bold text-white mb-8 tracking-tighter">INITIATE SEQUENCE</h2>
+                <p class="text-xl text-gray-400 mb-12 max-w-2xl mx-auto">
+                    The protocols are ready. The market waits for no one. Deploy the 3BOT algorithmic suite and claim
+                    your edge.
+                </p>
+
+                <button
+                    class="px-12 py-6 bg-green-600 text-white font-bold text-xl hover:bg-green-500 transition-all duration-300 shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:shadow-[0_0_40px_rgba(34,197,94,0.6)]">
+                    START NOW
+                </button>
+            </div>
+
+            <!-- Footer -->
+            <footer class="absolute bottom-0 w-full py-8 border-t border-white/5 bg-black/80 backdrop-blur-sm">
+                <div
+                    class="container mx-auto px-6 flex flex-col md:flex-row items-center justify-between text-gray-600 text-sm">
+                    <div class="font-mono">© 2026 3BOT PROTOCOL. ALL RIGHTS RESERVED.</div>
+                    <div class="flex items-center gap-6 mt-4 md:mt-0">
+                        <a href="#" class="hover:text-green-500 transition-colors">GITHUB</a>
+                        <a href="#" class="hover:text-green-500 transition-colors">TELEGRAM</a>
+                        <a href="#" class="hover:text-green-500 transition-colors">WHITEPAPER</a>
+                    </div>
+                </div>
+            </footer>
+        </section>
+
+    </main>
+
+    <!-- Starfield Animation Script -->
+    <script>
+        const canvas = document.getElementById('starfield');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let stars = [];
+        const STAR_COUNT = 200;
+
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+        }
+
+        class Star {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.z = Math.random() * width;
+                this.size = Math.random() * 2;
+                this.speed = Math.random() * 0.5 + 0.1;
+                this.opacity = Math.random();
+            }
+
+            update() {
+                // Move stars slowly to create parallax/depth
+                this.y -= this.speed;
+                if (this.y < 0) {
+                    this.y = height;
+                    this.x = Math.random() * width;
+                }
+
+                // Twinkle effect
+                this.opacity += (Math.random() - 0.5) * 0.1;
+                if (this.opacity < 0.1) this.opacity = 0.1;
+                if (this.opacity > 1) this.opacity = 1;
+            }
+
+            draw() {
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initStars() {
+            stars = [];
+            for (let i = 0; i < STAR_COUNT; i++) {
+                stars.push(new Star());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            stars.forEach(star => {
+                star.update();
+                star.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', () => {
+            resize();
+            initStars();
+        });
+
+        // Initialize
+        resize();
+        initStars();
+        animate();
+
+        // GSAP Animations Entry
+        gsap.from("header", { duration: 1, y: -100, opacity: 0, ease: "power3.out", delay: 0.5 });
+        gsap.from("#hero h1", { duration: 1.2, x: -50, opacity: 0, ease: "power3.out", delay: 0.8 });
+        gsap.from("#hero p", { duration: 1.2, x: -50, opacity: 0, ease: "power3.out", delay: 1 });
+        gsap.from("#hero button", { duration: 1, y: 50, opacity: 0, stagger: 0.2, ease: "back.out(1.7)", delay: 1.2 });
+        gsap.from(".coin-float", { duration: 1.5, scale: 0.8, opacity: 0, ease: "elastic.out(1, 0.5)", delay: 1 });
+
+        // GSAP Tilt Logic for Soul Cards
+        document.querySelectorAll('.soul-card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+
+                // Calculate rotation based on mouse position relative to center
+                const rotateX = ((y - centerY) / centerY) * -5; // Max 5 deg tilt
+                const rotateY = ((x - centerX) / centerX) * 5;
+
+                gsap.to(card, {
+                    duration: 0.5,
+                    transformPerspective: 1000,
+                    rotationX: rotateX,
+                    rotationY: rotateY,
+                    scale: 1.02,
+                    boxShadow: `0 0 30px ${card.dataset.glow}40`, // 40 is hex for alpha
+                    borderColor: card.dataset.glow,
+                    ease: "power2.out"
+                });
+            });
+
+            card.addEventListener('mouseleave', () => {
+                gsap.to(card, {
+                    duration: 0.8,
+                    rotationX: 0,
+                    rotationY: 0,
+                    scale: 1,
+                    boxShadow: 'none',
+                    borderColor: 'rgba(255, 255, 255, 0.1)',
+                    ease: "elastic.out(1, 0.5)"
+                });
+            });
+        });
+
+        // Live Terminal Simulation
+        const terminalLogs = document.getElementById('terminal-logs');
+        const logMessages = [
+            { text: "[SYSTEM] Initializing 3BOT core modules...", type: "info" },
+            { text: "[NET] Connecting to Binance API (WebSocket)...", type: "info" },
+            { text: "[AUTH] API Keys validated successfully.", type: "system" },
+            { text: "[MARKET] BTC/USDT Price: $98,450.20", type: "warn" },
+            { text: "[SCAN] Guardian Bot: RSI 35 (Waiting)", type: "normal" },
+            { text: "[SCAN] Strategist Bot: RSI 42 (Waiting)", type: "normal" },
+            { text: "[SCAN] Hunter Bot: RSI 37 (SIGNAL DETECTED)", type: "warn" },
+            { text: "[ANALYSIS] Verifying spread/volume data...", type: "info" },
+            { text: "[EXEC] Signal Validated. Risk Score: 3/6", type: "system" },
+            { text: "[TRADE] BUY ORDER EXECUTED @ $98,455.00", type: "error" },
+            { text: "[NOTIFY] Sending alert to Telegram Channel...", type: "info" },
+            { text: "[SYSTEM] Heartbeat check: OK.", type: "normal" }
+        ];
+
+        function addLog() {
+            if (!terminalLogs) return; // Guard clause
+
+            const randomLog = logMessages[Math.floor(Math.random() * logMessages.length)];
+            const time = new Date().toLocaleTimeString('en-US', { hour12: false });
+            const p = document.createElement('div');
+            p.className = 'terminal-log';
+
+            // Format content based on type
+            let colorClass = '';
+            if (randomLog.type === 'warn') colorClass = 'warn';
+            if (randomLog.type === 'error') colorClass = 'error';
+            if (randomLog.type === 'info') colorClass = 'info';
+
+            p.innerHTML = `<span class="opacity-50">[${time}]</span> <span class="${colorClass}">${randomLog.text}</span>`;
+
+            terminalLogs.prepend(p);
+
+            // GSAP animate in
+            gsap.to(p, { opacity: 1, x: 0, duration: 0.3 });
+
+            // Remove old logs
+            if (terminalLogs.children.length > 8) {
+                terminalLogs.lastElementChild.remove();
+            }
+
+            // Randomize next interval
+            setTimeout(addLog, Math.random() * 1000 + 500);
+        }
+
+        // Start terminal after delay
+        setTimeout(addLog, 2000);
+
+        // Core Logic: Sine Wave Animation (Canvas)
+        // Core Logic: Neon Candlestick Chart Engine
+        const waveCanvas = document.getElementById('waveCanvas');
+        const waveCtx = waveCanvas ? waveCanvas.getContext('2d') : null;
+        let waveWidth, waveHeight;
+        let candles = [];
+        const maxCandles = 60;
+        let scrollOffset = 0;
+
+        const signalPulse = document.getElementById('signal-pulse');
+        const signalText = document.getElementById('signal-text');
+
+        // Dynamic Data Generator
+        function generatePulseCandle(prevClose) {
+            const volatility = Math.random() * 40; // Max candle height variance
+            const direction = Math.random() > 0.48 ? 1 : -1; // Slight bullish bias
+
+            let open = prevClose;
+            let close = open + (Math.random() * volatility * direction);
+
+            // Wicks
+            let high = Math.max(open, close) + Math.random() * 15;
+            let low = Math.min(open, close) - Math.random() * 15;
+
+            return { open, close, high, low, id: Date.now() };
+        }
+
+        // Initialize Data
+        function initData() {
+            let startPrice = 1000;
+            for (let i = 0; i < maxCandles + 20; i++) {
+                const candle = generatePulseCandle(startPrice);
+                candles.push(candle);
+                startPrice = candle.close;
+            }
+        }
+
+        function resizeWave() {
+            if (!waveCanvas) return;
+            const parent = waveCanvas.parentElement;
+            waveWidth = parent.clientWidth;
+            waveHeight = parent.clientHeight;
+
+            const dpr = window.devicePixelRatio || 1;
+            waveCanvas.width = waveWidth * dpr;
+            waveCanvas.height = waveHeight * dpr;
+
+            if (waveCtx) {
+                waveCtx.scale(dpr, dpr);
+                // Reset Grid Params if needed
+            }
+        }
+
+        function drawGrid(ctx, w, h) {
+            ctx.beginPath();
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
+            ctx.lineWidth = 1;
+            ctx.shadowBlur = 0; // No glow for grid
+
+            // Vertical Lines (Time)
+            const gridSizeX = w / 10;
+            for (let x = 0; x <= w; x += gridSizeX) {
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, h);
+            }
+
+            // Horizontal Lines (Price)
+            const gridSizeY = h / 5;
+            for (let y = 0; y <= h; y += gridSizeY) {
+                ctx.moveTo(0, y);
+                ctx.lineTo(w, y);
+            }
+            ctx.stroke();
+        }
+
+        function drawCandles() {
+            if (!waveCanvas || !waveCtx) return;
+            waveCtx.clearRect(0, 0, waveWidth, waveHeight);
+
+            // Background Grid
+            drawGrid(waveCtx, waveWidth, waveHeight);
+
+            // Chart Logic
+            const candleWidth = waveWidth / maxCandles;
+            const spacing = 4;
+            const barW = candleWidth - spacing;
+
+            // Auto-Scale Logic
+            let minPrice = Infinity, maxPrice = -Infinity;
+            const visCandles = candles.slice(-maxCandles); // Show last N candles
+            visCandles.forEach(c => {
+                if (c.high > maxPrice) maxPrice = c.high;
+                if (c.low < minPrice) minPrice = c.low;
+            });
+            const range = maxPrice - minPrice || 1;
+            const padding = range * 0.2; // 20% vertical padding
+
+            // Render Candles
+            visCandles.forEach((c, index) => {
+                const x = index * candleWidth;
+
+                // Map price to Height (inverted Y axis for canvas)
+                const yOpen = waveHeight - ((c.open - minPrice + padding) / (range + padding * 2)) * waveHeight;
+                const yClose = waveHeight - ((c.close - minPrice + padding) / (range + padding * 2)) * waveHeight;
+                const yHigh = waveHeight - ((c.high - minPrice + padding) / (range + padding * 2)) * waveHeight;
+                const yLow = waveHeight - ((c.low - minPrice + padding) / (range + padding * 2)) * waveHeight;
+
+                const isGreen = c.close >= c.open;
+                const color = isGreen ? '#00ff41' : '#ff003c';
+
+                waveCtx.shadowBlur = 10;
+                waveCtx.shadowColor = color;
+                waveCtx.strokeStyle = color;
+                waveCtx.fillStyle = color;
+                waveCtx.lineWidth = 1.5;
+
+                // Wick
+                waveCtx.beginPath();
+                waveCtx.moveTo(x + barW / 2, yHigh);
+                waveCtx.lineTo(x + barW / 2, yLow);
+                waveCtx.stroke();
+
+                // Body
+                const bodyH = Math.max(Math.abs(yClose - yOpen), 1); // Min 1px height
+                const bodyY = Math.min(yOpen, yClose);
+
+                // Glassmorphic Body Fill
+                waveCtx.globalAlpha = 0.8;
+                waveCtx.fillRect(x, bodyY, barW, bodyH);
+                waveCtx.globalAlpha = 1.0;
+            });
+
+            // Signal Logic Simulation
+            const lastCandle = visCandles[visCandles.length - 1];
+            const isPump = lastCandle.close > lastCandle.open && (lastCandle.close - lastCandle.open) > (range * 0.05);
+
+            if (isPump) {
+                if (signalText) {
+                    signalText.innerText = "BULLISH DIVERGENCE DETECTED";
+                    signalText.classList.remove('text-gray-500');
+                    signalText.classList.add('text-neonGreen');
+                }
+            } else {
+                if (signalText) {
+                    signalText.innerText = "SCANNING MARKET STRUCTURE...";
+                    signalText.classList.add('text-gray-500');
+                    signalText.classList.remove('text-neonGreen');
+                }
+            }
+
+            // Animate Data Flow
+            scrollOffset += 1;
+            if (scrollOffset > 80) { // Much slower update speed (User Request: "molto più lente")
+                candles.shift();
+                candles.push(generatePulseCandle(candles[candles.length - 1].close));
+                scrollOffset = 0;
+            }
+
+            requestAnimationFrame(drawCandles);
+        }
+
+        // Initialize
+        if (waveCanvas) {
+            initData();
+            window.addEventListener('resize', resizeWave);
+            resizeWave();
+            drawCandles();
+        }
+
+        // Radar Animation Logic
+        function initRadar() {
+            const dots = {
+                red: document.getElementById('dot-red'),
+                yellow: document.getElementById('dot-yellow'),
+                green: document.getElementById('dot-green')
+            };
+
+            const triggerPing = (el, color) => {
+                if (!el) return;
+                // Scale up
+                el.style.transform = "scale(1.5)";
+                el.style.boxShadow = `0 0 30px ${color}`;
+                // Return to normal
+                setTimeout(() => {
+                    el.style.transform = "scale(1)";
+                    el.style.boxShadow = `0 0 15px ${color}`;
+                }, 400);
+            };
+
+            // Radar loop duration is 4000ms (4s)
+            // Approximate hit times based on rotation angle (0 deg = 3 o'clock)
+            // Yellow (~45deg) -> ~500ms
+            // Green (~135deg) -> ~1500ms
+            // Red (~315deg) -> ~3500ms
+
+            setInterval(() => {
+                setTimeout(() => triggerPing(dots.yellow, '#ffd700'), 500);
+                setTimeout(() => triggerPing(dots.green, '#00ff41'), 1500);
+                setTimeout(() => triggerPing(dots.red, '#ff003c'), 3500);
+            }, 4000);
+        }
+
+        initRadar();
+
+        // Ecosystem Modal Logic
+        const modalData = {
+            binance: {
+                title: 'BINANCE API',
+                desc: 'The entry point for real-time market data and secure order execution via HMAC SHA256 protocol.'
+            },
+            n8n: {
+                title: 'N8N ENGINE',
+                desc: 'The core orchestrator that manages complex logic, technical analysis, and workflow automation 24/7.'
+            },
+            telegram: {
+                title: 'TELEGRAM',
+                desc: 'The command and control interface for receiving real-time P&L reports and manual trigger alerts.'
+            }
+        };
+
+        function openModal(type) {
+            const modal = document.getElementById('tech-modal');
+            const title = document.getElementById('modal-title');
+            const desc = document.getElementById('modal-desc');
+            const content = modal.querySelector('div');
+
+            if (modalData[type]) {
+                title.innerText = modalData[type].title;
+                desc.innerText = modalData[type].desc;
+
+                // Show
+                modal.classList.remove('hidden');
+                // Trigger reflow
+                void modal.offsetWidth;
+
+                // Animate In
+                modal.classList.remove('opacity-0');
+                content.classList.remove('scale-90');
+                content.classList.add('scale-100');
+            }
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('tech-modal');
+            const content = modal.querySelector('div');
+
+            // Animate Out
+            modal.classList.add('opacity-0');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-90');
+
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        // --- OPERATIONAL METRICS COUNTER ANIMATION ---
+        gsap.registerPlugin(ScrollTrigger);
+
+        function initCounterAnimations() {
+            const counterElements = document.querySelectorAll('[data-count-to]');
+
+            counterElements.forEach(el => {
+                const targetValue = parseInt(el.getAttribute('data-count-to'));
+
+                ScrollTrigger.create({
+                    trigger: el,
+                    start: "top 90%",
+                    onEnter: () => {
+                        gsap.to(el, {
+                            innerText: targetValue,
+                            duration: 2,
+                            snap: { innerText: 1 },
+                            ease: "power2.out"
+                        });
+                    }
+                });
+            });
+        }
+
+        // Initialize animations on load
+        window.addEventListener('load', () => {
+            initCounterAnimations();
+        });
+
+    </script>
+</body>
+
+</html>
